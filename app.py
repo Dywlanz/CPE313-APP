@@ -4,7 +4,7 @@ from transformers import ElectraTokenizer, ElectraForSequenceClassification
 import torch.nn.functional as F
 
 # Load model and tokenizer
-MODEL_PATH = 'fine_tuned_model_17.pth'
+MODEL_PATH = 'fine_tuned_model_14.pth'
 
 # Load tokenizer and model
 tokenizer = ElectraTokenizer.from_pretrained('google/electra-small-discriminator')
