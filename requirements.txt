@@ -3,4 +3,4 @@ torch
 transformers
 openai-whisper
 pillow
-ffmpeg
+ffmpeg-python
