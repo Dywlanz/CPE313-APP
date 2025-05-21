@@ -42,4 +42,31 @@ audio_file = st.file_uploader("Upload an audio file (.wav, .mp3, etc.)", type=["
 
 if audio_file is not None:
     with open("temp_audio.wav", "wb") as f:
-        f.write(audio_fil_
+        f.write(audio_file.read())
+
+    st.audio("temp_audio.wav")
+    st.info("Transcribing audio...")
+    result = whisper_model.transcribe("temp_audio.wav")
+    raw_text = result["text"]
+    transcribed_text = censor_profanity(raw_text)
+    st.success("Transcription complete.")
+    st.markdown("**Transcribed Text (Censored):**")
+    st.markdown(transcribed_text)
+else:
+    transcribed_text = st.text_area("Or enter text manually:", height=150)
+
+# SENTIMENT ANALYSIS
+if st.button("Analyze Sentiment"):
+    if transcribed_text.strip() == "":
+        st.warning("Please provide some text.")
+    else:
+        # Run sentiment analysis
+        encoding = tokenizer(transcribed_text, return_tensors="pt", truncation=True, padding=True, max_length=128)
+        with torch.no_grad():
+            outputs = sentiment_model(**encoding)
+            probs = F.softmax(outputs.logits, dim=1)
+            pred = torch.argmax(probs, dim=1).item()
+            confidence = probs[0][pred].item()
+
+        st.markdown(f"**Predicted Sentiment:** {label_names[pred]}")
+        st.markdown(f"**Confidence:** {confidence:.2%}")
